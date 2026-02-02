@@ -12,7 +12,7 @@ const resume = {
   contact: {
     github: "https://github.com/Zhong220",
     linkedin: "https://www.linkedin.com/in/容-黃-a549713a9/",
-    email: "hrrong422@example.com",
+    email: "hrrong422@gmail.com",
     resumePdfHref: `${import.meta.env.BASE_URL}resume.pdf`,
   },
   about: {
