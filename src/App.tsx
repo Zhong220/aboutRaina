@@ -1,11 +1,107 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import "./App.css";
 
-function FieldCard(props: {
-  title: string;
-  subtitle: string;
-  onClick: () => void;
-}) {
+const resume = {
+  name: "Raina Huang",
+  hero: {
+    greeting: "Hi, I'm",
+    accent: "Raina",
+    summary:
+      "This is my personal space online. At the moment, you’ll find a few projects I’ve worked on and a little introduction about me. I’m planning to keep building it up—slowly adding more learning notes and hands-on practice as I grow.",
+  },
+  contact: {
+    github: "https://github.com/Zhong220",
+    linkedin: "https://www.linkedin.com/",
+    email: "YOUR_EMAIL@example.com",
+    resumePdfHref: `${import.meta.env.BASE_URL}resume.pdf`,
+  },
+  about: {
+    education: [
+      {
+        school: "National Chengchi University (NCCU)",
+        degree: "B.S. in Computer Science",
+        time: "Sep 2021 — Jan 2026 (Expected)",
+        coursework: [
+          "Distributed Systems",
+          "Cloud-Native System Development & Operations",
+          "Operating Systems",
+          "Database Systems",
+          "Computer Networks",
+          "Data Structures & Algorithms",
+          "Object-Oriented Programming",
+          "Computer Structure and Organization",
+        ],
+      },
+    ],
+  },
+  experience: [
+    {
+      title: "Part-time Assistant",
+      org: "NCCU Maker Space",
+      time: " Jul 2023 — Oct 2025",
+      desc:
+        "Supported daily operations and helped with equipment training (laser cutting / heat press / 3D printing). Also assisted workshops and troubleshooting.",
+    },
+    {
+      title: "Project Assistant",
+      org: "Taiwan United University System (NCCU Office)",
+      time: "Mar 2025 — Aug 2025",
+    },
+    {
+      title: "Project Assistant",
+      org: "Inclusive Wenshan Community Co-creation Program (NCCU College of Social Sciences)",
+      time: "Aug 2025 - Oct 2025",
+    },
+  ],
+  projects: [
+    {
+      name: "Carbon Manager",
+      stack: "React/TypeScript · Flask · DB Design",
+      overview:
+        "Built a full-stack prototype for managing carbon footprint records, including a web UI, REST APIs, and a relational schema. Implemented core CRUD and validated end-to-end integration across frontend, backend, and database.",
+    },
+    {
+      name: "Microservices + etcd 3-node cluster",
+      stack: " Flask · PostgreSQL · etcd · Docker",
+      overview:
+        "Deployed multiple Flask microservices with PostgreSQL using Docker Compose and a dedicated service network. Implemented service registration and centralized configuration via an etcd 3-node cluster with watch-based updates, and improved reliability with health checks and dependency ordering.",
+    },
+    {
+      name: "Mixed Han Character Translation",
+      stack: "Prompting · Fine-tuning · Evaluation",
+      overview:
+        "Built and tested a dictionary-assisted translation workflow for Chinese/Japanese/Taiwanese code-mixed text. Reduced incorrect dictionary replacements using negative samples and evaluated outputs with sentence-embedding similarity.",
+    },
+    {
+      name: "CI Automation Demo — Resume Website",
+      stack: "GitHub Actions · JavaScript · Bash",
+      overview:
+        "Built a resume website and set up a lightweight CI workflow in GitHub Actions. Automated lint/build checks on each push to keep the project deploy-ready.",
+    },
+  ],
+  skills: [
+    "Python",
+    "JavaScript",
+    "TypeScript",
+    "Bash/Shell",
+    "HTML/CSS",
+    "C/C++",
+    "Git",
+    "Linux",
+    "Docker",
+    "Flask",
+    "PostgreSQL",
+    "etcd",
+    "Docker Compose",
+    "Kubernetes (K3s)",
+    "k6",
+    "React",
+    "Vite",
+    "styled-components",
+  ],
+};
+
+function FieldCard(props: { title: string; subtitle: string; onClick: () => void }) {
   return (
     <button className="card" onClick={props.onClick} type="button">
       <div className="cardTitle">{props.title}</div>
@@ -15,12 +111,7 @@ function FieldCard(props: {
   );
 }
 
-function Modal(props: {
-  open: boolean;
-  title: string;
-  children: React.ReactNode;
-  onClose: () => void;
-}) {
+function Modal(props: { open: boolean; title: string; children: ReactNode; onClose: () => void }) {
   useEffect(() => {
     if (!props.open) return;
     const onKeyDown = (e: KeyboardEvent) => {
@@ -33,7 +124,12 @@ function Modal(props: {
   if (!props.open) return null;
 
   return (
-    <div className="modalOverlay" onMouseDown={props.onClose}>
+    <div
+      className="modalOverlay"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) props.onClose();
+      }}
+    >
       <div className="modal" onMouseDown={(e) => e.stopPropagation()}>
         <div className="modalHeader">
           <h2 className="modalTitle">{props.title}</h2>
@@ -56,106 +152,136 @@ export default function App() {
   return (
     <div className="page">
       <div className="container">
-        {/* Top / Hero */}
         <header className="hero">
           <div className="heroLeft">
             <div className="avatar" aria-label="Profile photo">
-              <img src={`${import.meta.env.BASE_URL}avatar.jpg`} alt="Raina Huang" />
+              <img src={`${import.meta.env.BASE_URL}zhong.jpg`} alt={resume.name} />
             </div>
           </div>
 
           <div className="heroRight">
             <h1 className="headline">
-              Hi, I’m <span className="accent">Raina</span>
+              {resume.hero.greeting} <span className="accent">{resume.hero.accent}</span>
             </h1>
 
-            <p className="subhead">
-              我在做前端與全端專案，喜歡把需求拆成可交付的小步驟，並用 CI/CD 把部署自動化。
-              目前專注：React / TypeScript、API 串接、Docker、GitHub Actions。
-            </p>
+            <p className="subhead">{resume.hero.summary}</p>
 
             <div className="ctaRow">
-              <button className="btn primary" type="button" onClick={() => setOpenId("projects")}>
-                View Projects
-              </button>
-              <button className="btn ghost" type="button" onClick={() => setOpenId("about")}>
-                Read About
+              <a className="btn primary" href={resume.contact.resumePdfHref} target="_blank" rel="noreferrer">
+                Resume
+              </a>
+
+              <button
+                className="btn ghost"
+                type="button"
+                onClick={() => document.getElementById("experience")?.scrollIntoView({ behavior: "smooth" })}
+              >
+                See Experience
               </button>
             </div>
           </div>
         </header>
 
-        {/* Cards */}
         <main className="cards">
-          <FieldCard title="About" subtitle="我是誰 · 我的定位" onClick={() => setOpenId("about")} />
-          <FieldCard title="Projects" subtitle="作品集" onClick={() => setOpenId("projects")} />
-          <FieldCard title="Skills" subtitle="技能" onClick={() => setOpenId("skills")} />
+          <FieldCard title="About" subtitle="Education" onClick={() => setOpenId("about")} />
+          <FieldCard title="Projects" subtitle="Overview" onClick={() => setOpenId("projects")} />
+          <FieldCard title="Skills" subtitle="Toolbox" onClick={() => setOpenId("skills")} />
         </main>
 
-        {/* Sections (可選：之後你可以用更完整內容取代) */}
-        <section className="section">
+        <section className="section" id="experience">
           <h2 className="sectionTitle">Experience</h2>
           <div className="timeline">
-            <div className="timelineItem">
-              <div className="dot" />
-              <div className="timelineContent">
-                <div className="timelineTop">
-                  <strong>Project / Internship Title</strong>
-                  <span className="muted">2025 — Present</span>
+            {resume.experience.map((item, idx) => (
+              <div className="timelineItem" key={`${item.title}-${item.time}-${idx}`}>
+                <div className="dot" />
+                <div className="timelineContent">
+                  <div className="timelineTop">
+                    <strong>
+                      {item.title}
+                      {item.org ? <span className="muted"> · {item.org}</span> : null}
+                    </strong>
+                    <span className="muted">{item.time}</span>
+                  </div>
+                  {item.desc ? <p className="muted">{item.desc}</p> : null}
                 </div>
-                <p className="muted">
-                  用一句話描述你做了什麼（例如：負責前端頁面與 API 串接，並建立 GitHub Actions 自動部署）。
-                </p>
               </div>
-            </div>
+            ))}
           </div>
         </section>
 
         <footer className="footer">
           <div className="contactRow">
-            <a className="contactBtn" href="https://github.com/Zhong220" target="_blank" rel="noreferrer">
+            <a className="contactBtn" href={resume.contact.github} target="_blank" rel="noreferrer">
               GitHub
             </a>
-            <a className="contactBtn" href="https://www.linkedin.com/" target="_blank" rel="noreferrer">
+            <a className="contactBtn" href={resume.contact.linkedin} target="_blank" rel="noreferrer">
               LinkedIn
             </a>
-            <a className="contactBtn" href="mailto:YOUR_EMAIL@example.com">
+            <a className="contactBtn" href={`mailto:${resume.contact.email}`}>
               Email
             </a>
-            <a className="contactBtn" href={`${import.meta.env.BASE_URL}resume.pdf`} target="_blank" rel="noreferrer">
+            <a className="contactBtn" href={resume.contact.resumePdfHref} target="_blank" rel="noreferrer">
               Resume
             </a>
           </div>
-          <div className="copyright muted">© {new Date().getFullYear()} Raina Huang</div>
+          <div className="copyright muted">
+            © {new Date().getFullYear()} {resume.name}
+          </div>
         </footer>
       </div>
 
       <Modal open={openId !== null} title={modalTitle} onClose={() => setOpenId(null)}>
         {openId === "about" ? (
           <div>
-            <p>我是一位資工系學生，喜歡做 UI/UX 乾淨、可維護的前端架構，並且能把部署流程自動化。</p>
-            <ul>
-              <li>關注：React + TypeScript、元件化、狀態管理</li>
-              <li>習慣：寫 README、分支管理、把需求拆成可交付的 commit</li>
+            <p className="muted" style={{ marginTop: 0 }}>
+              Education
+            </p>
+
+            <ul style={{ marginTop: 0 }}>
+              {resume.about.education.map((e) => (
+                <li key={`${e.school}-${e.time}`}>
+                  <strong>{e.school}</strong> — {e.degree} <span className="muted">{e.time}</span>
+                </li>
+              ))}
             </ul>
+
+            {resume.about.education[0]?.coursework?.length ? (
+              <>
+                <p className="muted" style={{ marginTop: 12 }}>
+                  Relevant Coursework
+                </p>
+                <ul style={{ marginTop: 0 }}>
+                  {resume.about.education[0].coursework.map((c) => (
+                    <li key={c}>{c}</li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
           </div>
         ) : openId === "projects" ? (
-          <ul>
-            <li>Project A：一句話亮點（技術 / 你負責的部分 / 成果）</li>
-            <li>Project B：一句話亮點（技術 / 你負責的部分 / 成果）</li>
-          </ul>
+          <div>
+            {resume.projects.map((p) => (
+              <div key={p.name} style={{ marginBottom: 14 }}>
+                <div className="timelineTop" style={{ marginBottom: 6 }}>
+                  <strong>{p.name}</strong>
+                  <span className="muted">{p.stack}</span>
+                </div>
+                <p className="muted" style={{ marginTop: 0 }}>
+                  {p.overview}
+                </p>
+              </div>
+            ))}
+          </div>
         ) : openId === "skills" ? (
           <div className="chipGrid">
-            <span className="chip">React</span>
-            <span className="chip">TypeScript</span>
-            <span className="chip">Git</span>
-            <span className="chip">GitHub Actions</span>
-            <span className="chip">Docker</span>
-            <span className="chip">REST API</span>
+            {resume.skills.map((s) => (
+              <span className="chip" key={s}>
+                {s}
+              </span>
+            ))}
           </div>
         ) : null}
       </Modal>
     </div>
   );
 }
-
